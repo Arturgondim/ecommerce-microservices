@@ -41,6 +41,22 @@ namespace Sales.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder(Order order)
         {
+            using var httpClient = new HttpClient();
+
+            var stockUrl = "http://localhost:5029/api/stock/" + order.ProductId;
+            var response = await httpClient.GetAsync(stockUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest("Produto não encontrado no estoque.");
+            }
+
+            var product = await response.Content.ReadFromJsonAsync<ProductDTO>();
+
+            if (product == null || product.StockQuantity < order.Quantity)
+            {
+                return BadRequest($"Estoque insuficiente. Restam apenas {product?.StockQuantity} unidades.");
+            }
             
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
