@@ -38,7 +38,7 @@ namespace Stock.API.Controllers
 
             return product;
         }
-        
+
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct(Product product)
         {
@@ -46,6 +46,21 @@ namespace Stock.API.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetProducts), new { id = product.Id }, product);
+        }
+                          // DELETE: api/stock/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null)
+        {
+        return NotFound();
+        }
+
+         _context.Products.Remove(product);
+         await _context.SaveChangesAsync();
+
+        return NoContent(); // Retorna 204 (Sucesso sem conteúdo)
         }
         
     }
