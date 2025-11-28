@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sales.API.Data;
 using Sales.API.Models;
+using Sales.API.Services;
 
 namespace Sales.API.Controllers
 {
@@ -14,10 +15,11 @@ namespace Sales.API.Controllers
     public class SalesController : ControllerBase
     {
         private readonly SalesContext _context;
-
-        public SalesController(SalesContext context)
+        private readonly RabbitMQProducer _rabbitMQProducer;
+    public SalesController(SalesContext context, RabbitMQProducer rabbitMQProducer)
         {
             _context = context;
+            _rabbitMQProducer = rabbitMQProducer;
         }
 
         [HttpGet]
@@ -60,6 +62,9 @@ namespace Sales.API.Controllers
             
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
+
+            var eventMessage = new OrderCreatedEvent(order.ProductId, order.Quantity);
+            _rabbitMQProducer.SendMessage(eventMessage);
 
             return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
         }
