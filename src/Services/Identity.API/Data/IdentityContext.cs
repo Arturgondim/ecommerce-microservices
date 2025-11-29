@@ -1,0 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using Identity.API.Models;
+
+namespace Identity.API.Data
+{
+    public class IdentityContext : DbContext
+    {
+        public IdentityContext(DbContextOptions<IdentityContext> options) : base(options) { }
+
+        public DbSet<User> Users { get; set; }
+    }
+}
