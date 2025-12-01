@@ -21,8 +21,6 @@ function Cart() {
     setIsProcessing(true);
 
     try {
-      // Como nossa API cria 1 pedido por item, vamos fazer um loop
-      // Em sistemas reais, a API aceitaria uma lista de itens de uma vez
       for (const item of cartItems) {
         const orderData = {
           productId: item.id,

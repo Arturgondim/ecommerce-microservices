@@ -33,7 +33,6 @@ namespace Identity.API.Controllers
             if (await _context.Users.AnyAsync(u => u.Email == user.Email))
                 return BadRequest("Usuário já existe.");
 
-            // Validação básica (opcional)
             if (string.IsNullOrEmpty(user.CPF)) return BadRequest("CPF é obrigatório");
 
             _context.Users.Add(user);

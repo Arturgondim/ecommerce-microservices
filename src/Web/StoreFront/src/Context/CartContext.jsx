@@ -3,7 +3,7 @@ import { createContext, useState, useContext, useEffect } from 'react';
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  // Tenta carregar do localStorage ao iniciar (para não perder o carrinho se der F5)
+  // Tenta carregar do localStorage ao iniciar 
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem('cart');
     return savedCart ? JSON.parse(savedCart) : [];
