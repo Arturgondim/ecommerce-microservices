@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme {
+  --color-flamengo-red: #C3281E;
+  --color-flamengo-black: #1E1E1E;
+}

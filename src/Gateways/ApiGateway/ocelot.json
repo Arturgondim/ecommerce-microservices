@@ -1,6 +1,18 @@
 {
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/Auth/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5047 
+        }
+      ],
+      "UpstreamPathTemplate": "/loja/auth/{everything}",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
       "DownstreamPathTemplate": "/api/stock/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -32,4 +44,5 @@
   "GlobalConfiguration": {
     "BaseUrl": "http://localhost:5000"
   }
+  
 }

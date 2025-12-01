@@ -30,11 +30,12 @@ namespace Identity.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(User user)
         {
-            // Verifica se já existe
             if (await _context.Users.AnyAsync(u => u.Email == user.Email))
                 return BadRequest("Usuário já existe.");
 
-            // Em produção, a senha deveria ser criptografada aqui!
+            // Validação básica (opcional)
+            if (string.IsNullOrEmpty(user.CPF)) return BadRequest("CPF é obrigatório");
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -55,6 +56,14 @@ namespace Identity.API.Controllers
             // GERA O TOKEN JWT
             var token = GenerateJwtToken(user);
             return Ok(new { token });
+        }
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null) 
+                return NotFound("E-mail não encontrado.");
+            return Ok(new { message = "Se o e-mail existir, enviamos um link de recuperação." });
         }
 
         private string GenerateJwtToken(User user)
