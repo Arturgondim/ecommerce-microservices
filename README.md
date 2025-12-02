@@ -28,7 +28,7 @@ Sistema de e-commerce temático do Flamengo desenvolvido com arquitetura de micr
    cd ecommerce-microservices
 
 
-2. **Execute o script de configuração : Execute o script de setup para restaurar pacotes e baixar imagens do Docker:**:
+2. **Execute o script de configuração:**:
 
    **No Windows (PowerShell)**:
 
@@ -42,7 +42,7 @@ Sistema de e-commerce temático do Flamengo desenvolvido com arquitetura de micr
    chmod +x setup.sh
    ./setup.sh
    ```
-3. **Iniciar a Aplicação: Utilize o script para subir todos os serviços**
+3. **Iniciar a Aplicação:**
 
    **No Windows (PowerShell)**:
 
@@ -64,7 +64,6 @@ Sistema de e-commerce temático do Flamengo desenvolvido com arquitetura de micr
    - RabbitMQ Management: http://localhost:15672 (Usuário: guest / Senha: guest)
 
 5. **Acessar o Swagger do Gateway**
-**Acesse o Swagger do Gateway**:
    - Abra seu navegador e acesse: `https://localhost:5144/swagger`
    - O Swagger do Gateway agrega todas as APIs (Inventory e Sales)
    - Você pode testar todos os endpoints diretamente pelo Swagger
@@ -89,6 +88,8 @@ O sistema já vem com usuários pré-configurados:
 
 ### Estrutura de pastas
 
+
+```text
 ecommerce-microservices/
 ├── src/
 │   ├── Gateways/
@@ -101,6 +102,7 @@ ecommerce-microservices/
 │   └── Web/
 │       └── StoreFront/        # Frontend React + Tailwind CSS
 └── docker-compose.yml         # Infraestrutura (SQL Server + RabbitMQ)
+```
    
 
 ### ⚙️ Funcionalidades Implementadas
