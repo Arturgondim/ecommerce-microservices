@@ -1,12 +1,21 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useCart } from './Context/CartContext';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 
 function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Pega os dados do usuário que vêm do App.jsx
+  const { user } = useOutletContext() || {}; 
+  const navigate = useNavigate();
 
   useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = () => {
     axios.get('http://localhost:5144/loja/produtos')
       .then(response => {
         setProducts(response.data);
@@ -16,7 +25,26 @@ function Products() {
         console.error("Erro ao buscar produtos:", error);
         setLoading(false);
       });
-  }, []);
+  };
+
+  // --- ADMIN: FUNÇÃO DE DELETAR -
+  const handleDelete = async (id, name) => {
+    const confirm = window.confirm(`Tem certeza que deseja excluir "${name}" do estoque?`);
+    if (!confirm) return;
+
+    try {
+      const token = localStorage.getItem('user_token');
+      await axios.delete(`http://localhost:5144/loja/produtos/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      alert("Produto removido com sucesso!");
+      // Atualiza a lista na hora
+      setProducts(products.filter(p => p.id !== id));
+    } catch (error) {
+      alert("Erro ao excluir. Verifique se você é Admin.");
+    }
+  };
 
   // Filtros
   const uniformes = products.filter(p => p.name.toLowerCase().includes('camisa'));
@@ -38,42 +66,69 @@ function Products() {
         <a href="#acessorios" className="px-4 py-2 bg-white rounded-full shadow hover:bg-red-50 text-flamengo-red font-bold transition">Acessórios</a>
       </div>
 
+      {/* BOTÃO DE ADICIONAR (EXCLUSIVO PARA ADMIN) */}
+      {user?.role === 'Admin' && (
+        <div className="max-w-7xl mx-auto mb-8 text-right">
+          <button 
+            onClick={() => navigate('/novo-produto')} 
+            className="bg-green-600 text-white px-6 py-2 rounded shadow font-bold hover:bg-green-700 transition transform hover:scale-105"
+          >
+            + Novo Produto
+          </button>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto">
-        {uniformes.length > 0 && <CategorySection title="Mantos Sagrados" id="uniformes" items={uniformes} />}
-        {ingressos.length > 0 && <CategorySection title="Ingressos e Experiências" id="ingressos" items={ingressos} />}
-        {acessorios.length > 0 && <CategorySection title="Acessórios e Colecionáveis" id="acessorios" items={acessorios} />}
+        {uniformes.length > 0 && <CategorySection title="Mantos Sagrados" id="uniformes" items={uniformes} user={user} onDelete={handleDelete} />}
+        {ingressos.length > 0 && <CategorySection title="Ingressos e Experiências" id="ingressos" items={ingressos} user={user} onDelete={handleDelete} />}
+        {acessorios.length > 0 && <CategorySection title="Acessórios e Colecionáveis" id="acessorios" items={acessorios} user={user} onDelete={handleDelete} />}
       </div>
     </div>
   );
 }
 
-function CategorySection({ title, id, items }) {
+function CategorySection({ title, id, items, user, onDelete }) {
   return (
-    <div id={id} className="mt-12 scroll-mt-28"> {/* scroll-mt ajuda na âncora */}
+    <div id={id} className="mt-12 scroll-mt-28">
       <h2 className="text-3xl font-bold text-gray-800 mb-6 border-l-8 border-flamengo-red pl-4">
         {title}
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {items.map(product => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} user={user} onDelete={onDelete} />
         ))}
       </div>
     </div>
   );
 }
 
-function ProductCard({ product }) {
-  const { addToCart } = useCart(); // <--- Hook do Carrinho
+function ProductCard({ product, user, onDelete }) {
+  const { addToCart } = useCart(); 
 
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col h-full border border-gray-100">
+    <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col h-full border border-gray-100 relative">
+      
+      {/* --- BOTÃO DE EXCLUIR (EXCLUSIVO DO ADMIN) */}
+      {user?.role === 'Admin' && (
+       <button 
+          onClick={() => onDelete(product.id, product.name)}
+          className="absolute top-2 right-2 bg-white text-red-600 w-8 h-8 rounded-full shadow-md hover:bg-red-100 z-10 font-bold flex items-center justify-center border border-red-100"
+          title="Excluir Produto"
+        >
+          ✕
+        </button>
+      )}
+
       <div className="h-56 w-full bg-gray-100 flex items-center justify-center relative group">
         <img 
           src={product.imageUrl} 
           alt={product.name} 
           className="max-h-full max-w-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
           referrerPolicy="no-referrer"
-          onError={(e) => { e.target.onerror = null; e.target.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png'; }}
+          onError={(e) => { 
+            e.target.onerror = null; 
+            e.target.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png'; 
+          }}
         />
       </div>
       
@@ -100,7 +155,7 @@ function ProductCard({ product }) {
             onClick={() => addToCart(product)} 
             className="w-full bg-flamengo-red text-white font-bold py-2 rounded hover:bg-red-800 transition flex items-center justify-center gap-2 shadow-sm active:scale-95"
           >
-            <span>🛒</span> Adicionar
+           Adicionar
           </button>
         </div>
       </div>

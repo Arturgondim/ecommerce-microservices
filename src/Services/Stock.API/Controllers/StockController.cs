@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization; // <--- Importante
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Stock.API.Models;
 using Stock.API.Data;
-
+using Stock.API.Models;
 
 namespace Stock.API.Controllers
 {
@@ -21,47 +17,66 @@ namespace Stock.API.Controllers
             _context = context;
         }
 
+        // Público
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             return await _context.Products.ToListAsync();
         }
+
+        // Público
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
-
-            if (product == null)
-            {
-                return NotFound();
-            }
-
+            if (product == null) return NotFound();
             return product;
         }
 
+        // Só Admin pode criar
         [HttpPost]
+        [Authorize(Roles = "Admin")] 
         public async Task<ActionResult<Product>> CreateProduct(Product product)
         {
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetProducts), new { id = product.Id }, product);
+            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
-                          // DELETE: api/stock/5
+
+        // Só Admin pode atualizar 
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateProduct(int id, Product product)
+        {
+            if (id != product.Id) return BadRequest();
+
+            _context.Entry(product).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Products.Any(e => e.Id == id)) return NotFound();
+                else throw;
+            }
+
+            return NoContent();
+        }
+
+        // Só Admin pode deletar
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-        var product = await _context.Products.FindAsync(id);
-        if (product == null)
-        {
-        return NotFound();
-        }
+            var product = await _context.Products.FindAsync(id);
+            if (product == null) return NotFound();
 
-         _context.Products.Remove(product);
-         await _context.SaveChangesAsync();
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
 
-        return NoContent(); // Retorna 204 (Sucesso sem conteúdo)
+            return NoContent();
         }
-        
     }
 }
