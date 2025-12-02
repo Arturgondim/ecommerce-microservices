@@ -36,8 +36,8 @@ function Cart() {
       }
 
       alert("Compra realizada com sucesso! SRN! 🔴⚫");
-      clearCart(); // Limpa o carrinho
-      navigate('/produtos'); // Volta pra loja
+      clearCart(); 
+      navigate('/produtos'); 
     } catch (error) {
       console.error(error);
       alert("Erro ao processar a compra. Verifique se o estoque ainda está disponível.");

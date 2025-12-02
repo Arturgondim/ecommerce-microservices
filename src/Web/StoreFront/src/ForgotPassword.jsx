@@ -21,7 +21,6 @@ function ForgotPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4 pt-20">
-      {/* BORDA SUPERIOR VERMELHA */}
       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border-t-8 border-flamengo-red">
         
         <h2 className="text-2xl font-bold text-center text-flamengo-black mb-4">Recuperar Senha</h2>
@@ -40,8 +39,6 @@ function ForgotPassword() {
                 required 
             />
           </div>
-          
-          {/* BOTÃO VERMELHO */}
           <button type="submit" className="w-full bg-flamengo-red text-white font-bold py-3 rounded hover:bg-red-800 transition">
             ENVIAR LINK
           </button>

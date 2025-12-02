@@ -49,8 +49,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication(); // 1º
-app.UseAuthorization();  // 2º
+app.UseAuthentication(); 
+app.UseAuthorization();  
 
 app.MapControllers();
 Stock.API.Data.DbInitializer.Seed(app);

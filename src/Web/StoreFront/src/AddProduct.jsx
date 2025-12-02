@@ -21,7 +21,6 @@ function AddProduct() {
     const token = localStorage.getItem('user_token');
 
     try {
-      // Converte preço e estoque para números
       const payload = {
         ...formData,
         price: parseFloat(formData.price),

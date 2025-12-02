@@ -24,7 +24,7 @@ export const AppRoutes = () => {
           {/* Rotas de Usuário */}
           <Route path="carrinho" element={<Cart />} />
           
-          {/* Rotas de Admin (Você poderia proteger isso no futuro) */}
+          {/* Rotas de Admin */}
           <Route path="novo-produto" element={<AddProduct />} /> 
         </Route>
       </Routes>

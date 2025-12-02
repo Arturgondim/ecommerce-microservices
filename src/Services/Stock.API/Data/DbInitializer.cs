@@ -13,7 +13,6 @@ namespace Stock.API.Data
 
                 context.Database.Migrate();
 
-                // Se já tiver dados, não faz nada (para aplicar os novos, você precisará limpar o banco)
                 if (context.Products.Any())
                 {
                     Console.WriteLine("--> Banco já contém dados. Seed ignorado.");

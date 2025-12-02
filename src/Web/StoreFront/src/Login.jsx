@@ -18,7 +18,7 @@ function Login() {
 
       localStorage.setItem('user_token', response.data.token);
       alert("Login realizado com sucesso! SRN! 🔴⚫");
-      navigate('/produtos'); // Redireciona para a loja
+      navigate('/produtos'); 
     } catch {
       setError("Email ou senha inválidos.");
     }

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 namespace Sales.API.Models
 {
-    // Essa classe serve apenas para ler a resposta que vem da API de Estoque
     public class ProductDTO
     {
         public int Id { get; set; }

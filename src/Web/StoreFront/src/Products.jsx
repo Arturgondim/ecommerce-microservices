@@ -7,7 +7,6 @@ function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Pega os dados do usuário que vêm do App.jsx
   const { user } = useOutletContext() || {}; 
   const navigate = useNavigate();
 
