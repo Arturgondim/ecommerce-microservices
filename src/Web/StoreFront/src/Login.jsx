@@ -51,7 +51,7 @@ function Login() {
             />
             {/* LINK DE ESQUECI A SENHA */}
             <div className="text-right mt-1">
-                <Link to="/recuperar-senha" class="text-xs text-gray-500 hover:text-flamengo-red">
+                <Link to="/recuperar-senha" className="text-xs text-gray-500 hover:text-flamengo-red">
                     Esqueceu a senha?
                 </Link>
             </div>

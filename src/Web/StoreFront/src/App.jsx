@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { jwtDecode } from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
+import { useCart } from './Context/CartContext';
 
 function App() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const { cartCount } = useCart();
 
   const getUserFromToken = () => {
     const token = localStorage.getItem('user_token');
@@ -13,12 +15,10 @@ function App() {
 
     try {
       const decoded = jwtDecode(token);
-      
       const role = decoded.role || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
       const name = decoded.unique_name || decoded.email || "Usuário";
-
       return { name, role };
-    } catch (err) {
+    } catch (error) {
       return null;
     }
   };
@@ -28,7 +28,7 @@ function App() {
     if (loggedUser && !user) {
       setUser(loggedUser);
     }
-  }, [location]);
+  }, [location, user]);
 
   const logout = () => {
     localStorage.removeItem('user_token');
@@ -51,7 +51,7 @@ function App() {
           <div className="hidden md:flex space-x-6 text-sm font-medium">
              {!isHomePage && (
                 <Link to="/" className="hover:text-flamengo-red transition flex items-center gap-1">
-                      Início
+                   Início
                 </Link>
               )}
           </div>
@@ -69,22 +69,36 @@ function App() {
                   )}
                 </div>
                 
-                <button className="bg-flamengo-red px-4 py-1 rounded font-bold text-sm hover:bg-red-700 transition">
-                  Carrinho (0)
-                </button>
+                <Link 
+                  to="/carrinho" 
+                  className="bg-flamengo-red px-4 py-1 rounded font-bold text-sm hover:bg-red-700 transition text-white flex items-center"
+                >
+                  Carrinho ({cartCount})
+                </Link>
 
                 <button 
                   onClick={logout} 
-                  className="border border-white text-white hover:bg-white hover:text-black px-3 py-1 rounded transition text-xs font-bold uppercase ml-2"
+                  className="ml-2 border-2 border-red-500 text-red-500 hover:bg-red-600 hover:text-white px-3 py-1 rounded transition text-sm font-bold uppercase"
                 >
-                  SAIR
+                  Sair
                 </button>
               </div>
             ) : (
               !isAuthPage && (
                 <div className="flex items-center gap-3">
-                  <Link to="/login" className="text-white hover:text-flamengo-red font-medium transition text-sm">Entrar</Link>
-                  <Link to="/cadastro" className="bg-flamengo-red px-4 py-2 rounded font-bold text-sm hover:bg-red-700 transition">Cadastrar</Link>
+                  <Link 
+                    to="/login" 
+                    className="text-white hover:text-flamengo-red font-medium transition text-sm"
+                  >
+                    Entrar
+                  </Link>
+                  
+                  <Link 
+                    to="/cadastro" 
+                    className="bg-flamengo-red px-4 py-2 rounded font-bold text-sm hover:bg-red-700 transition"
+                  >
+                    Cadastrar
+                  </Link>
                 </div>
               )
             )}
@@ -92,7 +106,7 @@ function App() {
         </div>
       </nav>
 
-      <Outlet context={{ user }} /> 
+      <Outlet context={{ user }} />
     </div>
   );
 }
